@@ -18,3 +18,5 @@ In this project, you will deploy a static website to AWS by performing the follo
 Prerequisites:
 - AWS Account
 - [Student-ready starter code](https://drive.google.com/open?id=15vQ7-utH7wBJzdAX3eDmO9ls35J5_sEQ) - Download and unzip this file.
+
+- 
