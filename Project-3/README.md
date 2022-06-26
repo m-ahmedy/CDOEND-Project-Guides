@@ -10,6 +10,7 @@ In this project, you will prove your mastery of the following learning objective
 ### Instructions
 
 1 - [Selling CI/CD](instructions/1-selling-cicd.md)
+2 - [Prerequisites](instructions/2-prerequisites.md)
 
 ### Project Submission
 
