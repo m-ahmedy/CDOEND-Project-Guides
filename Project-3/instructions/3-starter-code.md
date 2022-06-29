@@ -60,6 +60,7 @@ The intentional errors are
 
 Notes to take from backend/README.md:
 - Scripts:
+    - Install dependencies: `npm install`
     - Build: `npm run build`
     - Unit Test: `npm run test`
     - Scan for vulnerabilities: `npm run audit --audit-level=critical`
@@ -69,36 +70,37 @@ Notes to take from backend/README.md:
 - Environment variables:
 You need to add some environment variables to your system in order to run migrations or the backend.
 
-- **TYPEORM_CONNECTION**: The type of the database, always set to `postgres`
-- **TYPEORM_HOST**: The endpoint of the DB instance, set to either values:
-    - The RDS instance **endpoint** for production
-    - or `localhost` for developing locally with Docker Compose
-- **TYPEORM_PORT**: The port where DB communication will occur, set to either values:
-    - `5423`: for production RDS instance
-    - `5532`: for local development using the provided Docker Compose file
-- **TYPEORM_USERNAME**: Username of the DB
-    - **The username you set in RDS**: for production RDS instance
-    - `postgres`: for development using the provided Docker Compose file
-- **TYPEORM_PASSWORD**: Password of the DB
-    - `password` for local Docker Compose development
-    - **The password you set in RDS** for production
-- **TYPEORM_DATABASE**: The actual database running on the instance
-    - This is **not the RDS Instance Identifier**, but it's the **Initial database name**, make sure not to leave this field empty when creating the RDS instance
-    - Keep it `glee` for both development and production
-- **TYPEORM_MIGRATIONS**: Where DB migrations are located in the code
-    - Set to `./src/migrations/*.ts`
-    - We will change this value when deploying the production build of the backend on EC2
-- **TYPEORM_MIGRATIONS_DIR**: Where DB migrations directory is located in the code
-    - Set to `./src/migrations`
-    - We will change this value when deploying the production build of the backend on EC2
-- **TYPEORM_ENTITIES**: Where DB entities are located in the code
-    - Set to `./src/modules/**/*.entity.ts`
-    - We will change this value when deploying the production build of the backend on EC2
+    - **TYPEORM_CONNECTION**: The type of the database, always set to `postgres`
+    - **TYPEORM_HOST**: The endpoint of the DB instance, set to either values:
+        - The RDS instance **endpoint** for production
+        - or `localhost` for developing locally with Docker Compose
+    - **TYPEORM_PORT**: The port where DB communication will occur, set to either values:
+        - `5423`: for production RDS instance
+        - `5532`: for local development using the provided Docker Compose file
+    - **TYPEORM_USERNAME**: Username of the DB
+        - **The username you set in RDS**: for production RDS instance
+        - `postgres`: for development using the provided Docker Compose file
+    - **TYPEORM_PASSWORD**: Password of the DB
+        - `password` for local Docker Compose development
+        - **The password you set in RDS** for production
+    - **TYPEORM_DATABASE**: The actual database running on the instance
+        - This is **not the RDS Instance Identifier**, but it's the **Initial database name**, make sure not to leave this field empty when creating the RDS instance
+        - Keep it `glee` for both development and production
+    - **TYPEORM_MIGRATIONS**: Where DB migrations are located in the code
+        - Set to `./src/migrations/*.ts`
+        - We will change this value when deploying the production build of the backend on EC2
+    - **TYPEORM_MIGRATIONS_DIR**: Where DB migrations directory is located in the code
+        - Set to `./src/migrations`
+        - We will change this value when deploying the production build of the backend on EC2
+    - **TYPEORM_ENTITIES**: Where DB entities are located in the code
+        - Set to `./src/modules/**/*.entity.ts`
+        - We will change this value when deploying the production build of the backend on EC2
 
-#### Backend README.md
+#### Frontend README.md
 
-Notes to take from backend/README.md:
+Notes to take from frontend/README.md:
 - Scripts:
+    - Install dependencies: `npm install`
     - Build: `npm run build`
     - Unit Test: `npm run test`
     - Scan for vulnerabilities: `npm run audit --audit-level=critical`
@@ -106,11 +108,12 @@ Notes to take from backend/README.md:
 - Environment variables:
 You need to add one environment variable to your system in order to run migrations or the backend.
 
-- **API_URL**: The backend URL which is hosting the application
-    - `http://localhost:3030`: For local development
-    - `http://<EC2 Public IP>:3030`: For production backend build
+    - **API_URL**: The backend URL which is hosting the application
+        - `http://localhost:3030`: For local development
+        - `http://<EC2 Public IP>:3030`: For production backend build
 
 ## Instructions
+
 1. Create a new repo on GitHub, name it whatever you see fit
 
 2. Initialize a local Git repo on a folder in your local machine
