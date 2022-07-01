@@ -12,6 +12,7 @@ In this project, you will prove your mastery of the following learning objective
 1. [Selling CI/CD](instructions/1-selling-cicd.md)
 2. [Prerequisites](instructions/2-prerequisites.md)
 3. [Starter Code](instructions/3-starter-code.md)
+4. [CI Stages](instructions/4-ci-stages.md)
 
 ### Project Submission
 
