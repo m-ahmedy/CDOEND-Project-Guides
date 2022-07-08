@@ -14,6 +14,7 @@ In this project, you will prove your mastery of the following learning objective
 3. [Starter Code](instructions/3-starter-code.md)
 4. [CI Stages](instructions/4-ci-stages.md)
 5. [Enabling Alerts](instructions/5-enabling-alerts.md)
+6. [Udapeople App](instructions/6-udapeople-app.md)
 
 ### Project Submission
 
