@@ -47,7 +47,8 @@ git clone https://github.com/udacity/cdond-c3-projectstarter
         To call attention to **unfinished** jobs, there are some "**non-zero error codes**" (e.g. **exit 1**).
         The starter config.yml file will not work out-of-the-box.
 
-### Source code folders: backend/ and frontend
+### Source code folders: `backend` and `frontend`
+
 It is a good practice to read through the frontend and backend README.
 
 Note that there are intentional errors left in the source code, and it **will not work out of the box on your local machine**
@@ -61,6 +62,7 @@ The intentional errors are
 Notes to take from backend/README.md:
 - Scripts:
     - Install dependencies: `npm install`
+    - Run in Dev Mode: `npm start`
     - Build: `npm run build`
     - Unit Test: `npm run test`
     - Scan for vulnerabilities: `npm run audit --audit-level=critical`
@@ -101,6 +103,7 @@ You need to add some environment variables to your system in order to run migrat
 Notes to take from frontend/README.md:
 - Scripts:
     - Install dependencies: `npm install`
+    - Run in Dev Mode: `npm start`
     - Build: `npm run build`
     - Unit Test: `npm run test`
     - Scan for vulnerabilities: `npm run audit --audit-level=critical`
