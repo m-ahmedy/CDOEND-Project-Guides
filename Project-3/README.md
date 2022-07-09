@@ -15,6 +15,7 @@ In this project, you will prove your mastery of the following learning objective
 4. [CI Stages](instructions/4-ci-stages.md)
 5. [Enabling Alerts](instructions/5-enabling-alerts.md)
 6. [Udapeople App](instructions/6-udapeople-app.md)
+7. [Configuration Management Setup](instructions/7-configuration-management-setup.md)
 
 ### Project Submission
 
