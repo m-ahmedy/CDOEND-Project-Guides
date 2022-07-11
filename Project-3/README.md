@@ -16,6 +16,7 @@ In this project, you will prove your mastery of the following learning objective
 5. [Enabling Alerts](instructions/5-enabling-alerts.md)
 6. [Udapeople App](instructions/6-udapeople-app.md)
 7. [Configuration Management Setup](instructions/7-configuration-management-setup.md)
+8. [Deploy Infrastructure Stage](instructions/8-deploy-infrastructure-stage.md)
 
 ### Project Submission
 

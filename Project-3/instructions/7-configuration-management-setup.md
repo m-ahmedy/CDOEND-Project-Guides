@@ -1,4 +1,3 @@
-
 # Part 7 - Configuration Management Setup
 
 In this section, we will do configuration management setup to help us in the upcoming CD stages
@@ -15,10 +14,12 @@ On AWS:
 - [Create the initial CloudFront distribution](#create-the-initial-cloudfront-distribution)
 
 On CircleCI:
+
 - [Add SSH Key](#add-ssh-key)
 - [Set Environment Variables](#set-environment-variables)
 
 On CircleCI Config:
+
 - [Add installation commands](#add-installation-commands)
 
 ## AWS Set Up
@@ -32,10 +33,11 @@ In this guide I will use the **US West - Oregon (us-west-2)** region
 - On AWS Management Console navigate to `EC2` > `Key Pairs` > `Create key pair`
 
 - Use the following values:
-    - Name: `udacity` or any name you see fit, **it will matter**
-    - Private key file format: `.pem (For use with OpenSSH)`
 
-        ![](../assets/part-7/key-pair-info.png)
+  - Name: `udacity` or any name you see fit, **it will matter**
+  - Private key file format: `.pem (For use with OpenSSH)`
+
+    ![](../assets/part-7/key-pair-info.png)
 
 - Click Create key pair
 
@@ -50,20 +52,21 @@ We need to create an IAM user with programmatic credentials to enable CircleCI d
 - On AWS Management Console navigate to `IAM` > `Users` > `Add users`
 
 - In the first page of user details use the following values:
-    - User name: `udapeople-circleci-runner` or any name you see fit, **it won't matter much**
-    - Select AWS credentials type: **check** `Access key - Programmatic access`
 
-        ![](../assets/part-7/user-info-1.png)
+  - User name: `udapeople-circleci-runner` or any name you see fit, **it won't matter much**
+  - Select AWS credentials type: **check** `Access key - Programmatic access`
+
+    ![](../assets/part-7/user-info-1.png)
 
 - In the second page of user details, for simplicity add the user to the group with admin privileges (if you have one), or simply attach the `AdministratorAccess` directly to the user
 
-    ![](../assets/part-7/user-info-2.png)
+  ![](../assets/part-7/user-info-2.png)
 
 - Continue page 3 and page 4 as they are and create a user
 
 - On page 5 download the CSV file containing the new user's credentials
 
-    ![](../assets/part-7/user-info-5.png)
+  ![](../assets/part-7/user-info-5.png)
 
 #### Saving profile info on our local AWS CLI
 
@@ -91,9 +94,9 @@ We shall have an output similar to this
 
 ```json
 {
-    "UserId": "ABCDEFGHIJKLMNOPQRSTU",
-    "Account": "123456789123",
-    "Arn": "arn:aws:iam::13456789123:user/udapeople-circleci-runner"
+  "UserId": "ABCDEFGHIJKLMNOPQRSTU",
+  "Account": "123456789123",
+  "Arn": "arn:aws:iam::13456789123:user/udapeople-circleci-runner"
 }
 ```
 
@@ -109,7 +112,7 @@ We need to create a publicly accessible RDS instance with minimal cost to hold o
 
 - Add an inbound rule for `PostgreSQL` from `Anywhere` (basically Protocol: `TCP`, Port: `5432`, Source: `0.0.0.0/0`)
 
-    ![](../assets/part-7/rds-security-group.png)
+  ![](../assets/part-7/rds-security-group.png)
 
 - Leave everything else as it's and click create
 
@@ -121,11 +124,11 @@ We need to create a publicly accessible RDS instance with minimal cost to hold o
 
 - In the first card choose `Standard Create`, and in **Engine** options choose `PostgreSQL` with the **default** version
 
-    ![](../assets/part-7/create-rds-1.png)
+  ![](../assets/part-7/create-rds-1.png)
 
 - In **Templates** choose `Free tier`, and you'll see that you're restricted to `Single DB instance` in the next card
 
-    ![](../assets/part-7/create-rds-2.png)
+  ![](../assets/part-7/create-rds-2.png)
 
 - In Settings choose a name for your instance identifier (`udapeople-db`)
 
@@ -133,40 +136,40 @@ We need to create a publicly accessible RDS instance with minimal cost to hold o
 
 - In **Instance configuration** you can select any available option (`db.t4g.micro`)
 
-    ![](../assets/part-7/create-rds-3.png)
+  ![](../assets/part-7/create-rds-3.png)
 
 - In Storage make sure to **uncheck** `Enable storage autoscaling`
 
-    ![](../assets/part-7/create-rds-4.png)
+  ![](../assets/part-7/create-rds-4.png)
 
 - **Important**: In **Connectivity** make sure you choose the correct values
-    - **VPC**: `Default VPC`
-    - **Subnet group**: `default`
-    - **Public access**: `Yes`
-    - **VPC Security Group**: `Choose existing`
-        - **Remove** `default`
-        - **Add** the security group created in the previous step (`Public-PostgreSQL-RDS`)
-    - **Availability Zone**: `No preference`
-    - **Additional configuration**:
-        - Database port: `5432`
 
-    ![](../assets/part-7/create-rds-5.png)
+  - **VPC**: `Default VPC`
+  - **Subnet group**: `default`
+  - **Public access**: `Yes`
+  - **VPC Security Group**: `Choose existing`
+    - **Remove** `default`
+    - **Add** the security group created in the previous step (`Public-PostgreSQL-RDS`)
+  - **Availability Zone**: `No preference`
+  - **Additional configuration**:
+    - Database port: `5432`
 
-- In **Database authentication** choose `Password authentication` 
+  ![](../assets/part-7/create-rds-5.png)
+
+- In **Database authentication** choose `Password authentication`
 
 - **Important**: Open the Additional configuration card
 
-    - In Database options set **Initial database name** to a value (`glee`)
+  - In Database options set **Initial database name** to a value (`glee`)
 
-        The same value here will be the **TYPEORM_DATABASE** environment variable
+    The same value here will be the **TYPEORM_DATABASE** environment variable
 
-        ![](../assets/part-7/create-rds-6.png)
+    ![](../assets/part-7/create-rds-6.png)
 
-    - Optional: You can disable **Encryption**, **Backup**, **Monitoring**, and other checked features
-        ![](../assets/part-7/create-rds-7.png)
+  - Optional: You can disable **Encryption**, **Backup**, **Monitoring**, and other checked features
+    ![](../assets/part-7/create-rds-7.png)
 
 - Finally, create a database
-
 
 If you checked Auto generate password you'll have a prompt with a blue ribbon in the next page
 
@@ -176,7 +179,7 @@ Click on `View credentials settings` and save the username and password in a saf
 
 ![](../assets/part-7/create-rds-creds-2.png)
 
-### Create the initial CloudFront distribution 
+### Create the initial CloudFront distribution
 
 First we need to think of a random string (7 characters), this will be a unique identifier for our initial distribution and its origin bucket
 
@@ -190,39 +193,34 @@ Think of something like `k0aehenb`, but always think of alternatives in case a s
 
 - For **AWS Region** use the same region where we are developing the app (`us-west-2`)
 
-    ![](../assets/part-7/create-s3-1.png)
+  ![](../assets/part-7/create-s3-1.png)
 
 - Remember to **uncheck** `Block all public access`, and **check** the `I acknowledge` checkbox
 
-    ![](../assets/part-7/create-s3-2.png)
+  ![](../assets/part-7/create-s3-2.png)
 
 - Keep everything as is and create the bucket
 
 - Navigate to the `Permissions` tab of bucket details, and update the bucket policy, also remember to change the bucket ARN to that of the created bucket
 
-    ```json
-    {
-        "Version": "2012-10-17",
-        "Statement": [
-            {
-                "Sid": "PublicRead",
-                "Effect": "Allow",
-                "Principal": "*",
-                "Action": [
-                    "s3:GetObject",
-                    "s3:GetObjectVersion"
-                ],
-                "Resource": [
-                    "arn:aws:s3:::udapeople-k0aehenb/*"
-                ]
-            }
-        ]
-    }
-    ```
+  ```json
+  {
+    "Version": "2012-10-17",
+    "Statement": [
+      {
+        "Sid": "PublicRead",
+        "Effect": "Allow",
+        "Principal": "*",
+        "Action": ["s3:GetObject", "s3:GetObjectVersion"],
+        "Resource": ["arn:aws:s3:::udapeople-k0aehenb/*"]
+      }
+    ]
+  }
+  ```
 
 - Save the new policy, and now you can see that the bucket is publicly accessible
 
-    ![](../assets/part-7/create-s3-3.png)
+  ![](../assets/part-7/create-s3-3.png)
 
 - You can also enable static site hosting on this bucket, but it's unnecessary as it's only a placeholder
 
@@ -245,26 +243,26 @@ This parameter is used in two places inside the template
 
 - As an identifier for the origin bucket
 
-    ```yaml
-      WebpageCDN:
-        Type: AWS::CloudFront::Distribution
-        Properties:
-        DistributionConfig:
-            Origins:
-            - DomainName: !Sub "udapeople-${WorkflowID}.s3.amazonaws.com"
-    ```
+  ```yaml
+  WebpageCDN:
+    Type: AWS::CloudFront::Distribution
+    Properties:
+    DistributionConfig:
+      Origins:
+        - DomainName: !Sub "udapeople-${WorkflowID}.s3.amazonaws.com"
+  ```
 
-    Take a look at the bucket endpoint, the bucket should always be named in this format `udapeople-<Unique ID>`
+  Take a look at the bucket endpoint, the bucket should always be named in this format `udapeople-<Unique ID>`
 
 - And as an output to indicate what version the CloudFront distribution is currently serving
 
-    ```yaml
-    Outputs:
-        WorkflowID:
-            Value: !Sub ${WorkflowID}
-            Export:
-                Name: WorkflowID
-    ```
+  ```yaml
+  Outputs:
+    WorkflowID:
+      Value: !Sub ${WorkflowID}
+      Export:
+        Name: WorkflowID
+  ```
 
 Now we can use the previous knowledge and create the first CloudFront distribution
 
@@ -285,7 +283,7 @@ Then let the terminal open until the stack is created
 
 - On CircleCI project navigate to `Project Settings` > `SSH Keys` > `Additional SSH Keys`
 
-    ![](../assets/part-7/circleci-ssh-key-1.png)
+  ![](../assets/part-7/circleci-ssh-key-1.png)
 
 - In the dialog enter a `Hostname` for the key
 
@@ -334,35 +332,39 @@ We will add some updates to the `commands` section to install necessary tools
 In `.circleci/config.yml` commands section we add the following commands
 
 - To install AWS CLI v2 ([this guide](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html))
-    
-    ```yaml
-    install_awscli:
-        description: Install AWS CLI v2
-        steps:
-        - run:
-            name: Install AWS CLI v2
-            command: |
-                curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-                unzip awscliv2.zip
-                sudo ./aws/install
-    ```
+
+  ```yaml
+  install_awscli:
+    description: Install AWS CLI v2
+    steps:
+      - run:
+          name: Install AWS CLI v2
+          command: |
+            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+            unzip awscliv2.zip
+            sudo ./aws/install
+  ```
 
 - To install Ansible ([this guide](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html))
 
-    We need to make sure that `python3` and `pip3` are installed before installing ansible
+  We need to make sure that `python3` and `pip3` are installed before installing ansible
 
-    ```yaml
-    install_ansible:
-        description: Install Ansible
-        steps:
-        - run:
-            name: Install Ansible
-            command: |
-                sudo apt update
-                sudo apt install -y python3 python3-pip
-                python3 -m pip install --user ansible
-    ```
+  ```yaml
+  install_ansible:
+    description: Install Ansible
+    steps:
+      - run:
+          name: Install Ansible
+          command: |
+            sudo apt update
+            sudo apt install -y python3 python3-pip
+            python3 -m pip install --user ansible
+  ```
 
 ## Footnotes
+
+_Note_ If you decided to use another docker image for the CD stages remember the following points:
+
+- AWS CLI v2 **does not work** with Alpine based images, for the sake of this project, continue with Debian / Ubuntu based images as they are much easier to prepare
 
 Now we are ready to continue developing CD stages
