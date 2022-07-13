@@ -238,6 +238,24 @@ destroy-environment:
           aws cloudformation delete-stack --stack-name udapeople-backend-<< parameters.Workflow_ID >>
 ```
 
+## Workflow update
+
+Then update the workflow at the end of config.yml
+
+Starting from `deploy-infrastructure` stage we need to filter out commits, only commits on the **master** branch should trigger CD stages
+
+```yml
+workflows:
+  default:
+    jobs:
+      ...
+      - deploy-infrastructure:
+          requires: [test-frontend, test-backend, scan-frontend, scan-backend]
+          filters:
+            branches:
+              only: [master]
+```
+
 ## Updates to backend CloudFormation template
 
 ### EC2Instance AMI ID
