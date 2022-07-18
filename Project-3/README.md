@@ -18,6 +18,7 @@ In this project, you will prove your mastery of the following learning objective
 7. [Configuration Management Setup](instructions/7-configuration-management-setup.md)
 8. [Deploy Infrastructure Stage](instructions/8-deploy-infrastructure-stage.md)
 9. [Configure Infrastructure Stage](instructions/9-configure-infrastructure-stage.md)
+10. [Run Migrations Stage](instructions/10-run-migrations-stage.md)
 
 ### Project Submission
 
