@@ -114,14 +114,14 @@ We can filter out the output of `aws ec2 describe-instances` with the query that
 
 ## Deploy Infrastructure Job
 
-Executor environment, we'll use `cimg/base:stable` as discussed in the previous part
+Executor environment, we'll use `cimg/python:3.10` as discussed in the previous part
 
 `.circleci/config.yml`
 
 ```yml
 deploy-infrastructure:
   docker:
-    - image: cimg/base:stable
+    - image: cimg/python:3.10
 ```
 
 ---

@@ -259,14 +259,14 @@ Just a simple update to the instance security group to enable traffic on the def
 
 ### `configure-infrastructure` Job
 
-Executor environment, we'll use `cimg/base:stable` as discussed in the previous part
+Executor environment, we'll use `cimg/python:3.10` as discussed in the previous part
 
 `.circleci/config.yml`
 
 ```yml
 configure-infrastructure:
   docker:
-    - image: cimg/base:stable
+    - image: cimg/python:3.10
 ```
 
 ---

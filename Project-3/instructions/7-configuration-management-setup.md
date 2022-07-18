@@ -323,7 +323,7 @@ TYPEORM_DATABASE=<RDS Initial database name, Again NOT DB Instance Identifier>
 
 For CD Stages we will use a base image from CircleCI that supports the tools we shall use: Ansible, AWS CLI, etc.
 
-We will use [`cimg/base:stable`](https://circleci.com/developer/images/image/cimg/base), it's a base convenience image provided by CircleCI built upon Ubuntu that's ready to run all types of software
+We will use [`cimg/python:3.10`](https://circleci.com/developer/images/image/cimg/python), it's a base convenience image provided by CircleCI built upon Ubuntu that's with Python 3.10 pre-installed and ready to run all types of software
 
 We will add some updates to the `commands` section to install necessary tools
 
@@ -356,8 +356,6 @@ In `.circleci/config.yml` commands section we add the following commands
       - run:
           name: Install Ansible
           command: |
-            sudo apt update
-            sudo apt install -y python3 python3-pip
             python3 -m pip install --user ansible
   ```
 
