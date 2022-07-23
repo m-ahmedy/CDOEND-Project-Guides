@@ -19,6 +19,7 @@ In this project, you will prove your mastery of the following learning objective
 8. [Deploy Infrastructure Stage](instructions/8-deploy-infrastructure-stage.md)
 9. [Configure Infrastructure Stage](instructions/9-configure-infrastructure-stage.md)
 10. [Run Migrations Stage](instructions/10-run-migrations-stage.md)
+11. [Deploy to Production Stage](instructions/11-deploy-to-production.md)
 
 ### Project Submission
 
