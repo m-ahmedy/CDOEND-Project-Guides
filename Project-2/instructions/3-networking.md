@@ -14,7 +14,8 @@ Using one of the [private CIDR Blocks](https://en.wikipedia.org/wiki/Private_net
 
 We will go with 10.0.0.0/16 CIDR Block for the VPC, each subnet will take a portion of this block
 
-Check this valuable reource on subnetting and PV
+Check this valuable resource for understanding [IPv4, CIDR, and VPC Subnets](https://www.youtube.com/watch?v=z07HTSzzp3o)
+
 
 | Item             | CIDR        | Parameter Name     |
 | ---------------- | ----------- | ------------------ |
