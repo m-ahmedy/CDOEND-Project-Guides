@@ -31,3 +31,4 @@ _Optional_ - To add more challenge to the project, once the project is completed
 - [Overview](./instructions/1-overview.md)
 - [Requirements](./instructions/2-requirements.md)
 - [Networking Infrastructure](./instructions/3-networking.md)
+- [Compute Power](./instructions/4-compute.md)
