@@ -143,7 +143,8 @@ Required properties
 
 - **Assume Role Policy Document**
 
-  The trust policy that is associated with this role. Trust policies define which entities can assume the role
+  The trust policy that is associated with this role. Trust policies define which entities can assume the role.
+  see [IAM role for applications that run on Amazon EC2 instances](https://docs.aws.amazon.com/autoscaling/ec2/userguide/us-iam-role.html) in the Amazon EC2 Auto Scaling User Guide
 
 ```yml
 Resources:
@@ -263,4 +264,99 @@ Properties:
     Properties:
       Roles:
         - !Ref EC2S3AccessRole
+```
+
+## Auto Scaling
+
+On top of the network infrastructure we deployed in the previous part, we need to deploy an Auto-Scaling group of our webserver instances spun across our two **private subnets**
+
+The resources in this section are
+
+- 1 Launch Configuration
+- 1 Auto Scaling Group
+- 1 Auto Scaling Policy
+
+### The launch configuration
+
+The launch configuration can be used by an Auto Scaling group to configure Amazon EC2 instances
+
+Needed properties:
+
+- **Image ID**
+
+  The ID of the Amazon Machine Image (AMI) that was assigned during registration
+
+  An Ubuntu Server AMI can be obtained from the AMI Catalog in the same region of deployment
+
+  A more elegant way could be to query SSM to fetch the latest AMI of a specific [Ubuntu Release with its code-name](https://wiki.ubuntu.com/Releases), read more [here](https://ubuntu.com/server/docs/cloud-images/amazon-ec2)
+
+- **Instance Type**
+
+  Specifies the instance type of the EC2 instance
+
+  A requirement is already set to use **t3.small** or better
+
+- **Key Name**
+
+  The name of the key pair for SSH access
+
+  _Note_: This value is set for debugging only, after finishing the deployment and making sure everything works correctly we shall remove this property
+
+- **Instance Monitoring**
+
+  Controls whether instances in this group are launched with detailed (true) or basic (false) monitoring
+
+  This property is needed for collecting metrics at a better frequency to allow for better ASG scaling reaction times
+
+- **Security Groups**
+
+  A list that contains the security groups to assign to the instances in the Auto Scaling group
+
+- **IAM Instance Profile**
+
+  The name or the Amazon Resource Name (ARN) of the instance profile associated with the IAM role for the instance
+
+- **User Data** script:
+
+  The **Base64-encoded** user data to make available to the launched EC2 instances
+
+  Detailed explanation of all the steps
+
+  | Step                                                                        | Implementation                                 |
+  | --------------------------------------------------------------------------- | ---------------------------------------------- |
+  | Declaring the executable                                                    | `#!/bin/bash`                                  |
+  | Updating apt cache                                                          | `apt update`                                   |
+  | Installing AWS CLI and Apache Web-Server                                    | `apt install -y apache2 awscli`                |
+  | Starting Apache Service                                                     | `systemctl start apache2.service`              |
+  | Enabling Apache Service at startup                                          | `systemctl enable apache2.service`             |
+  | Syncing the contents of the serve folder with the contents of the S3 bucket | `aws s3 sync s3://${BucketName} /var/www/html` |
+
+```yml
+Parameters:
+  AmiId:
+    Type: "AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>"
+    Default: "/aws/service/canonical/ubuntu/server/jammy/stable/current/amd64/hvm/ebs-gp2/ami-id"
+
+Resources:
+  # ...
+  WebServerASGLaunchConfiguration:
+    Type: AWS::AutoScaling::LaunchConfiguration
+    Properties:
+      ImageId: !Ref AmiID
+      InstanceType: t3.small
+      # KeyName: YOUR_KEY
+      InstanceMonitoring: true
+      SecurityGroups:
+        - !Ref WebServerSecurityGroup
+      IamInstanceProfile: !Ref InstanceProfile
+      UserData:
+        Fn::Base64: !Sub |
+          #!/bin/bash
+          apt update -y
+          apt install apache2 awscli -y
+
+          systemctl start apache2.service
+          systemctl enable apache2.service
+
+          aws s3 sync s3://${BucketName} /var/www/html
 ```
