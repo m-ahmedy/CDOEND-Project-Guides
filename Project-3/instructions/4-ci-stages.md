@@ -61,7 +61,8 @@ build-frontend:
 2. `restore_cache`: The built-in feature in CircleCI to cache dependencies so that it doesn't take much time
     ```yml
     - restore_cache:
-          keys: [frontend-deps]
+          keys:
+          - frontend-deps-{{ checksum "frontend/package-lock.json" }}
     ```
 3. Going into the frontend folder, installing dependencies and building the frontend
     ```yml
@@ -76,7 +77,7 @@ build-frontend:
     ```yml
     - save_cache:
         paths: [frontend/node_modules]
-        key: frontend-deps
+        key: frontend-deps-{{ checksum "frontend/package-lock.json" }}
     ```
 
 #### Jobs: build-backend
@@ -102,7 +103,8 @@ build-backend:
 2. `restore_cache`: The built-in feature in CircleCI to cache dependencies so that it doesn't take much time
     ```yml
     - restore_cache:
-        keys: [backend-deps]
+        keys:
+        - backend-deps-{{ checksum "backend/package-lock.json" }}
     ```
 3. Going into the backend folder, installing dependencies and building the backend
     ```yml
@@ -117,7 +119,7 @@ build-backend:
     ```yml
     - save_cache:
         paths: [backend/node_modules]
-        key: backend-deps
+        key: backend-deps-{{ checksum "backend/package-lock.json" }}
     ```
 
 #### Workflow update
@@ -193,7 +195,8 @@ test-frontend:
 2. `restore_cache`:
     ```yml
     - restore_cache:
-        keys: [frontend-deps]
+        keys: 
+        - frontend-deps-{{ checksum "frontend/package-lock.json"}}
     ```
 3. Going into the frontend folder, installing dependencies and testing the frontend
     ```yml
@@ -224,7 +227,8 @@ test-backend:
 2. `restore_cache`:
     ```yml
     - restore_cache:
-        keys: [backend-deps]
+        keys:
+        - backend-deps-{{ checksum "backend/package-lock.json" }}
     ```
 3. Going into the backend folder, installing dependencies and testing the backend
     ```yml
@@ -343,7 +347,8 @@ scan-frontend:
 2. `restore_cache`:
     ```yml
     - restore_cache:
-        keys: [frontend-deps]
+        keys:
+        - frontend-deps-{{ checksum "frontend/package-lock.json" }}
     ```
 3. Going into the frontend folder, installing dependencies and run the audit for critical vulnerabilities
     ```yml
@@ -374,7 +379,8 @@ test-backend:
 2. `restore_cache`:
     ```yml
     - restore_cache:
-        keys: [backend-deps]
+        keys:
+        - backend-deps-{{ checksum "backend/package-lock.json" }}
     ```
 3. Going into the backend folder, installing dependencies and run the audit for critical vulnerabilities
     ```yml
