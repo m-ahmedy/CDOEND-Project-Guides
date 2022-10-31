@@ -1,4 +1,3 @@
-
 # Part 4 - CI Stages
 
 ## Objectives
@@ -6,13 +5,13 @@
 **Complete CI Stages**
 
 - Build
-    - Fix the compilation error in the backend source code
+  - Fix the compilation error in the backend source code
 - Unit Test
-    - Fix the failing test case in the backend source code
-    - Fix the failing test case in the frontend source code
+  - Fix the failing test case in the backend source code
+  - Fix the failing test case in the frontend source code
 - Scan for Critical Vulnerabilities
-    - Fixing critically vulnerable packages in the backend source code
-    - Working around other critical vulnerabilities
+  - Fixing critically vulnerable packages in the backend source code
+  - Working around other critical vulnerabilities
 
 **Submission requirements**
 
@@ -24,103 +23,162 @@
 
 - CircleCI config: `.circleci/config.yml`
 - Backend Source Code
-    - `backend/src/main.ts`
-    - `backend/src/modules/domain/employees/commands/handlers/employee-activator.handler.spec.ts`
-    - `backend/package.json`
-- Backend Source Code
-    - `frontend/src/app/components/LoadingMessage/LoadingMessage.spec.tsx`
-
-## Considerations
-
-We will use a base image from CircleCI that supports **Node.js 13.8.0**
-
-We will use [`cimg/node:13.8.0`](https://circleci.com/developer/images/image/cimg/node), it's a convenience image provided by CircleCI that's built to run Node.js 13.8.0 on CircleCI
+  - `backend/src/main.ts`
+  - `backend/src/modules/domain/employees/commands/handlers/employee-activator.handler.spec.ts`
+  - `backend/package.json`
+- Frontend Source Code
+  - `frontend/src/app/components/LoadingMessage/LoadingMessage.spec.tsx`
 
 ## Implementation
+
+### General Structure
+
+All CI stages need a base docker image that supports **Node.js 13.8.0** and CircleCI
+
+We will use [`cimg/node:13.8.0`](https://circleci.com/developer/images/image/cimg/node) docker image, it's a convenience image provided by CircleCI that's built to run Node.js 13.8.0 on CircleCI
+
+So the executor environment will be the same for all upcoming stages in this guide
+
+```yml
+jobs:
+  ...
+  JOB:
+    docker:
+    - image: cimg/node:13.8.0
+```
+
+In addition to the executor environment, all CI stages has common structure of steps to be executed
+
+1. Checkout the code from the repository
+
+   ```yml
+   - checkout
+   ```
+
+1. `restore_cache`: The built-in feature in CircleCI to cache dependencies so that it doesn't take much time
+
+   ```yml
+   - restore_cache:
+       keys:
+         - TIER-deps-{{ checksum "TIER/package-lock.json" }}
+   ```
+
+   Where `TIER` can only be either **frontend** or **backend**
+
+   _Note_: The cache key utilizes the current state of the dependencies that's stored in the lock file `package-lock.json`, any changes to this file will result in creating a new cache key
+
+1. Install dependencies from NPM
+
+   ```yml
+   - run:
+       name: Install dependencies
+       command: |
+         cd TIER
+         npm install
+   ```
+
+   Where `TIER` is either **frontend** or **backend**
+
+1. Run the needed script
+
+   - Build stage
+
+     ```yml
+     - run:
+         name: Build TIER
+         command: |
+           cd TIER
+           npm run build
+     ```
+
+   - Test stage
+
+     ```yml
+     - run:
+         name: Run TIER unit tests
+         command: |
+           cd TIER
+           npm run test
+     ```
+
+   - Scan stage
+
+     ```yml
+     - run:
+         name: Scan TIER packages
+         command: |
+           cd TIER
+           npm audit --audit-level=critical
+     ```
+
+1. **Only for Build stages**: Save the dependencies to cache, if it does not exist
+
+   ```yml
+   - save_cache:
+       paths: [TIER/node_modules]
+       key: TIER-deps-{{ checksum "TIER/package-lock.json" }}
+   ```
 
 ### Build stage
 
 #### Jobs: build-frontend
 
-**Docker Image**
-
-First we define the executor environment, which will be the mentioned docker image
+Following the instructions at the beginning of this guide will yield the following configuration for the `build-frontend` stage
 
 ```yml
-build-frontend:
+jobs:
+  build-frontend:
     docker:
-    - image: cimg/node:13.8.0
-```
-
-**Steps**
-
-1. `checkout` command to check out the code
-    ```yml
-    - checkout
-    ```
-2. `restore_cache`: The built-in feature in CircleCI to cache dependencies so that it doesn't take much time
-    ```yml
-    - restore_cache:
+      - image: cimg/node:13.8.0
+    steps:
+      - checkout
+      - restore_cache:
           keys:
-          - frontend-deps-{{ checksum "frontend/package-lock.json" }}
-    ```
-3. Going into the frontend folder, installing dependencies and building the frontend
-    ```yml
-    - run:
-        name: Build frontend
-        command: |
+            - frontend-deps-{{ checksum "frontend/package-lock.json" }}
+      - run:
+          name: Install dependencies
+          command: |
             cd frontend
             npm install
+      - run:
+          name: Build frontend
+          command: |
+            cd frontend
             npm run build
-    ```
-4. Storing cache of the installed dependencies, the frontend dependencies are located in `frontend/node_modules`
-    ```yml
-    - save_cache:
-        paths: [frontend/node_modules]
-        key: frontend-deps-{{ checksum "frontend/package-lock.json" }}
-    ```
+      - save_cache:
+          paths: [frontend/node_modules]
+          key: frontend-deps-{{ checksum "frontend/package-lock.json" }}
+```
 
 #### Jobs: build-backend
 
-Just like the build-frontend but with the backend
-
-**Docker Image**
-
-First we define the executor environment, which will be the mentioned docker image
+Similarly, following the instructions at the beginning of this guide will yield the following configuration for the `build-frontend` stage
 
 ```yml
-build-backend:
+jobs:
+  ...
+  build-backend:
     docker:
     - image: cimg/node:13.8.0
-```
-
-**Steps**
-
-1. `checkout` command to check out the code
-    ```yml
+    steps:
     - checkout
-    ```
-2. `restore_cache`: The built-in feature in CircleCI to cache dependencies so that it doesn't take much time
-    ```yml
     - restore_cache:
-        keys:
-        - backend-deps-{{ checksum "backend/package-lock.json" }}
-    ```
-3. Going into the backend folder, installing dependencies and building the backend
-    ```yml
+       keys:
+         - backend-deps-{{ checksum "backend/package-lock.json" }}
     - run:
-        name: Build frontend
+        name: Install dependencies
         command: |
-            cd backend
-            npm install
-            npm run build
-    ```
-4. Storing cache of the installed dependencies, the backend dependencies are located in `backend/node_modules`
-    ```yml
+          cd backend
+          npm install
+    - run:
+        name: Build backend
+        command: |
+          cd backend
+          npm run build
     - save_cache:
         paths: [backend/node_modules]
         key: backend-deps-{{ checksum "backend/package-lock.json" }}
-    ```
+```
 
 #### Workflow update
 
@@ -174,71 +232,59 @@ Commit the change
 
 ### Test stage
 
-The same sequence will be followed for the test stages
-
 #### Jobs: test-frontend
 
-**Docker Image**
+Following the instructions at the beginning of this guide will yield the following configuration for the `test-frontend` stage
 
 ```yml
-test-frontend:
+jobs:
+  ...
+  test-frontend:
     docker:
     - image: cimg/node:13.8.0
-```
-
-**Steps**
-
-1. `checkout`
-    ```yml
+    steps:
     - checkout
-    ```
-2. `restore_cache`:
-    ```yml
     - restore_cache:
-        keys: 
-        - frontend-deps-{{ checksum "frontend/package-lock.json"}}
-    ```
-3. Going into the frontend folder, installing dependencies and testing the frontend
-    ```yml
+       keys:
+         - frontend-deps-{{ checksum "frontend/package-lock.json" }}
     - run:
-        name: Test frontend
+        name: Install dependencies
         command: |
-            cd frontend
-            npm install
-            npm run test
-    ```
+          cd frontend
+          npm install
+    - run:
+        name: Run frontend unit tests
+        command: |
+          cd frontend
+          npm run test
+```
 
 #### Jobs: test-backend
 
-**Docker Image**
+Similarly, following the instructions at the beginning of this guide will yield the following configuration for the `test-frontend` stage
 
 ```yml
-test-backend:
+jobs:
+  ...
+  test-backend:
     docker:
     - image: cimg/node:13.8.0
-```
-
-**Steps**
-
-1. `checkout`
-    ```yml
+    steps:
     - checkout
-    ```
-2. `restore_cache`:
-    ```yml
     - restore_cache:
-        keys:
-        - backend-deps-{{ checksum "backend/package-lock.json" }}
-    ```
-3. Going into the backend folder, installing dependencies and testing the backend
-    ```yml
+       keys:
+         - backend-deps-{{ checksum "backend/package-lock.json" }}
     - run:
-        name: Test backend
+        name: Install dependencies
         command: |
-            cd backend
-            npm install
-            npm run test
-    ```
+          cd backend
+          npm install
+    - run:
+        name: Run backend unit tests
+        command: |
+          cd backend
+          npm run test
+```
 
 #### Workflow update
 
@@ -281,13 +327,13 @@ Go to the failing unit test suite location - `frontend/src/app/components/Loadin
 **Before**
 
 ```js
-    expect(wrapper.contains(<span>{message}?</span>)).toBeTruthy(); //remove the question mark to make the test pass
+expect(wrapper.contains(<span>{message}?</span>)).toBeTruthy(); //remove the question mark to make the test pass
 ```
 
 **After**
 
 ```js
-    expect(wrapper.contains(<span>{message}</span>)).toBeTruthy();
+expect(wrapper.contains(<span>{message}</span>)).toBeTruthy();
 ```
 
 ---
@@ -303,19 +349,19 @@ Go to the failing unit test suite location - `backend/src/modules/domain/employe
 **Before**
 
 ```js
-    const params = {
-        employeeId: 101, //change this to 100 to make the test pass
-        isActive: false,
-    };
+const params = {
+  employeeId: 101, //change this to 100 to make the test pass
+  isActive: false,
+};
 ```
 
 **After**
 
 ```js
-    const params = {
-        employeeId: 100,
-        isActive: false,
-    };
+const params = {
+  employeeId: 100,
+  isActive: false,
+};
 ```
 
 ---
@@ -326,71 +372,59 @@ Commit the change
 
 ### Analyze stage
 
-The same sequence will be followed for the analysis stages
-
 #### Jobs: scan-frontend
 
-**Docker Image**
+Following the instructions at the beginning of this guide will yield the following configuration for the `scan-frontend` stage
 
 ```yml
-scan-frontend:
+jobs:
+  ...
+  scan-frontend:
     docker:
     - image: cimg/node:13.8.0
-```
-
-**Steps**
-
-1. `checkout`
-    ```yml
+    steps:
     - checkout
-    ```
-2. `restore_cache`:
-    ```yml
     - restore_cache:
-        keys:
-        - frontend-deps-{{ checksum "frontend/package-lock.json" }}
-    ```
-3. Going into the frontend folder, installing dependencies and run the audit for critical vulnerabilities
-    ```yml
+       keys:
+         - frontend-deps-{{ checksum "frontend/package-lock.json" }}
     - run:
-        name: Analyze frontend
+        name: Install dependencies
         command: |
-            cd frontend
-            npm install
-            npm audit --audit-level=critical
-    ```
+          cd frontend
+          npm install
+    - run:
+        name: Scan frontend packages
+        command: |
+          cd frontend
+          npm audit --audit-level=critical
+```
 
 #### Jobs: scan-backend
 
-**Docker Image**
+Similarly, following the instructions at the beginning of this guide will yield the following configuration for the `scan-frontend` stage
 
 ```yml
-test-backend:
+jobs:
+  ...
+  scan-backend:
     docker:
     - image: cimg/node:13.8.0
-```
-
-**Steps**
-
-1. `checkout`
-    ```yml
+    steps:
     - checkout
-    ```
-2. `restore_cache`:
-    ```yml
     - restore_cache:
-        keys:
-        - backend-deps-{{ checksum "backend/package-lock.json" }}
-    ```
-3. Going into the backend folder, installing dependencies and run the audit for critical vulnerabilities
-    ```yml
+       keys:
+         - backend-deps-{{ checksum "backend/package-lock.json" }}
     - run:
-        name: Build backend
+        name: Install dependencies
         command: |
-            cd backend
-            npm install
-            npm audit --audit-level=critical
-    ```
+          cd backend
+          npm install
+    - run:
+        name: Scan backend packages
+        command: |
+          cd backend
+          npm audit --audit-level=critical
+```
 
 #### Workflow update
 
@@ -437,6 +471,7 @@ However, we will need our pipeline to pass, so we will use the `force fix` worka
 The `force fix` workaround **does not** fix the vulnerabilities permanently, but **only during the CI/CD pipeline** and **used only in the scan-\* stages**
 
 The command we will use for the `force fix` workaround is
+
 ```bash
 npm audit fix --force --audit-level=critical
 ```
@@ -450,24 +485,22 @@ _Note_: Add as many of this command to force-fix any remaining critical vulnerab
 **Before**
 
 ```yaml
-    - run:
-        name: Analyze frontend
-        command: |
-            cd frontend
-            npm install
-            npm audit --audit-level=critical
+- run:
+    name: Scan frontend packages
+    command: |
+      cd frontend
+      npm audit --audit-level=critical
 ```
 
 **After**
 
 ```yaml
-    - run:
-        name: Analyze frontend
-        command: |
-            cd frontend
-            npm install
-            npm audit fix --force --audit-level=critical
-            npm audit --audit-level=critical
+- run:
+    name: Scan frontend packages
+    command: |
+      cd frontend
+      npm audit fix --force --audit-level=critical
+      npm audit --audit-level=critical
 ```
 
 ---
@@ -487,25 +520,25 @@ _Note_: Add as many of this command to force-fix any remaining critical vulnerab
 **Before**
 
 ```yaml
-    - run:
-        name: Analyze backend
-        command: |
-            cd backend
-            npm install
-            npm audit --audit-level=critical
+- run:
+    name: Analyze backend
+    command: |
+      cd backend
+      npm install
+      npm audit --audit-level=critical
 ```
 
 **After**
 
 ```yaml
-    - run:
-        name: Analyze backend
-        command: |
-            cd backend
-            npm install
-            npm audit fix --force --audit-level=critical
-            npm audit fix --force --audit-level=critical
-            npm audit --audit-level=critical
+- run:
+    name: Analyze backend
+    command: |
+      cd backend
+      npm install
+      npm audit fix --force --audit-level=critical
+      npm audit fix --force --audit-level=critical
+      npm audit --audit-level=critical
 ```
 
 Second, update `backend/package.json` with the following values
@@ -541,3 +574,7 @@ Also
 Commit the change
 
 ---
+
+## Footnotes
+
+After finalizing these stages the source code is ready for us to examine and see locally
