@@ -4,29 +4,32 @@ In this part we proceed on to to the `configure-infrastructure` job. In this job
 
 ## Objectives
 
-- Complete the Configure Server Ansible Playbook
-- Complete the Configure Server Ansible Tasks
-  - Install Node.js v13.8.0
-  - Install PM2 process manager
-- Update the Prometheus Node Exporter Ansible Task
-  - Update Prometheus Node Exporter to the latest version
-- Update Backend CloudFormation template
-  - Open Node Exporter port
-- Complete the Job steps
+**Complete CI Stages**
 
-## Overview
+- Configure Infrastructure
+  - Complete the Configure Server Ansible Playbook
+  - Complete the Configure Server Ansible Tasks
+    - Install Node.js v13.8.0
+    - Install PM2 process manager
+  - Update the Prometheus Node Exporter Ansible Task
+    - Update Prometheus Node Exporter to the latest version
+  - Update Backend CloudFormation template
+    - Open Node Exporter port
 
-In this part we have some skeleton code regarding that we need to complete and refine to prepare our EC2 instances for hosting our backend web server
+**Submission requirements**
 
-Incomplete files:
+None
 
-- Configure Server playbook: `.circleci/ansible/configure-server.yml`
-- Configure Server tasks: `.circleci/ansible/roles/configure-server/tasks/main.yml`
+**Affected Files**
 
-Files that require updates:
-
-- Prometheus Node Exporter tasks: `.circleci/ansible/roles/configure-prometheus-node-exporter/tasks/main.yml`
+- CircleCI config: `.circleci/config.yml`
+- Ansible configurations:
+  - Configure Server playbook: `.circleci/ansible/configure-server.yml`
+  - Configure Server tasks: `.circleci/ansible/roles/configure-server/tasks/main.yml`
+  - Prometheus Node Exporter tasks: `.circleci/ansible/roles/configure-prometheus-node-exporter/tasks/main.yml`
 - Backend CloudFormation template: `.circleci/files/backend.yml`
+
+## Implementation
 
 ### Ansible playbook
 
@@ -64,9 +67,13 @@ We have this skeleton code of the ansible playbook in our starter code
 
 Sections to complete:
 
-- Waiting for connection pre-task
-- Verifying Python installation on the managed node pre-task
+- Pre-Tasks
+
+  - Waiting for connection
+  - Verifying Python installation on the managed node
+
 - Import environment variables from CircleCI (Not required)
+
 - Delegate tasks to roles (`configure-server`, and `configure-prometheus-node-exporter`)
 
 _Note_: All tasks in this playbook (and its roles) require **root** privileges, so we defined `become: true` on the play level and as a result all tasks will be executed with root privileges
@@ -77,23 +84,23 @@ If we are using the [Ansible extension for VS Code](https://marketplace.visualst
 
 `.circleci/ansible/configure-server.yml`
 
-- Before
+**Before**
 
-  ```yml
-  vars:
-    - ansible_python_interpreter: /usr/bin/python3
-    - ansible_host_key_checking: false
-    - ansible_stdout_callback: yaml
-  ```
+```yml
+vars:
+  - ansible_python_interpreter: /usr/bin/python3
+  - ansible_host_key_checking: false
+  - ansible_stdout_callback: yaml
+```
 
-- After
+**After**
 
-  ```yml
-  vars:
-    ansible_python_interpreter: /usr/bin/python3
-    ansible_host_key_checking: false
-    ansible_stdout_callback: yaml
-  ```
+```yml
+vars:
+  ansible_python_interpreter: /usr/bin/python3
+  ansible_host_key_checking: false
+  ansible_stdout_callback: yaml
+```
 
 #### Pre-tasks
 
@@ -102,14 +109,14 @@ For the first pre-task, we shall use `wait_for_connection` [module](https://docs
 ```yml
 - name: "wait 600 seconds for target connection to become reachable/usable."
     wait_for_connection:
-        timeout: 600
+      timeout: 600
 ```
 
 To verify Python 3 installation, we shall use the `apt` [module](https://docs.ansible.com/ansible/latest/collections/ansible/builtin/apt_module.html#ansible-collections-ansible-builtin-apt-module)
 
 ```yml
 - name: "install python for Ansible."
-   apt:
+  apt:
     name: python3
     update_cache: yes
 ```
@@ -126,29 +133,34 @@ roles:
 
 ### `configure-server` Role tasks
 
+In this role we need to define two tasks
+
+- Install Node.js v13.8.0
+- Install PM2 process manager
+
 #### **Important**: Node.js installation workaround
 
-It's required to install Node.js v13.8.0 on the backend instance to run our code, but normal installation methods doesn't allow us to install this version as it's now deprecated
+It's required to install Node.js **v13.8.0** on the backend instance to run our code, but normal installation methods doesn't allow us to install this version as it's now deprecated
 
 We will use a workaround method to install this version of Node
 
-- First we'll install the LTS version of Node.js, this version is guaranteed to work on backend Ubuntu distribution, we'll use official instructions from [NodeSource](https://github.com/nodesource/distributions#installation-instructions)
+1. First we'll install the LTS version of Node.js, this version is guaranteed to work on backend Ubuntu distribution, we'll use official instructions from [NodeSource](https://github.com/nodesource/distributions#installation-instructions)
 
-  ```sh
-  curl -fsSL https://deb.nodesource.com/setup_lts.x | sudo -E bash -
-  sudo apt-get install -y nodejs
-  ```
+```sh
+curl -fsSL https://deb.nodesource.com/setup_lts.x | sudo -E bash -
+sudo apt-get install -y nodejs
+```
 
-- Then we can use [**n - Node.js version manager**](https://www.npmjs.com/package/n) to install and use our desired 13.8.0 version of node
+1. Then we can use [**n - Node.js version manager**](https://www.npmjs.com/package/n) to install and use our desired 13.8.0 version of node
 
-  ```sh
-  sudo npm install -g n
-  sudo n 13.8.0
-  ```
+```sh
+sudo npm install -g n
+sudo n 13.8.0
+```
 
 This way we can ensure that our system will have our desired version of node
 
-We can implement this workaround in our `configure-server` tasks
+We can implement this workaround in our `configure-server` tasks using the built-in `shell` module
 
 ```yml
 ---
@@ -158,7 +170,7 @@ We can implement this workaround in our `configure-server` tasks
     curl -fsSL https://deb.nodesource.com/setup_lts.x | sudo -E bash -
     sudo apt-get install -y nodejs
 
-    # Use n version manager to use Node.js v13.8.0
+    # Use n version manager to switch to Node.js v13.8.0
     sudo npm install -g n
     sudo n 13.8.0
 ```
@@ -188,40 +200,40 @@ And update tasks file with the new version (replace version 0.17.0 to the latest
 
 `.circleci/ansible/roles/configure-prometheus-node-exporter/tasks/main.yml`
 
-- Before
+**Before**
 
-  ```yml
-  - name: "install node exporter."
-    unarchive:
-      src: https://github.com/prometheus/node_exporter/releases/download/v0.17.0/node_exporter-0.17.0.linux-amd64.tar.gz
-      dest: /tmp
-      remote_src: yes
+```yml
+- name: "install node exporter."
+  unarchive:
+    src: https://github.com/prometheus/node_exporter/releases/download/v0.17.0/node_exporter-0.17.0.linux-amd64.tar.gz
+    dest: /tmp
+    remote_src: yes
 
-  - name: "move binary to /usr/local/bin."
-    copy:
-      src: /tmp/node_exporter-0.17.0.linux-amd64/node_exporter
-      dest: /usr/local/bin/node_exporter
-      remote_src: yes
-      mode: "0777"
-  ```
+- name: "move binary to /usr/local/bin."
+  copy:
+    src: /tmp/node_exporter-0.17.0.linux-amd64/node_exporter
+    dest: /usr/local/bin/node_exporter
+    remote_src: yes
+    mode: "0777"
+```
 
-- After
+**After**
 
-  ```yml
-  - name: "install node exporter."
-    unarchive:
-      src: https://github.com/prometheus/node_exporter/releases/download/v1.3.1/node_exporter-1.3.1.linux-amd64.tar.gz
-      dest: /tmp
-      remote_src: yes
+```yml
+- name: "install node exporter."
+  unarchive:
+    src: https://github.com/prometheus/node_exporter/releases/download/v1.3.1/node_exporter-1.3.1.linux-amd64.tar.gz
+    dest: /tmp
+    remote_src: yes
 
-  - name: "move binary to /usr/local/bin."
-    become: true
-    copy:
-      src: /tmp/node_exporter-1.3.1.linux-amd64/node_exporter
-      dest: /usr/local/bin/node_exporter
-      remote_src: yes
-      mode: "0777"
-  ```
+- name: "move binary to /usr/local/bin."
+  become: true
+  copy:
+    src: /tmp/node_exporter-1.3.1.linux-amd64/node_exporter
+    dest: /usr/local/bin/node_exporter
+    remote_src: yes
+    mode: "0777"
+```
 
 ### Update Backend CloudFormation Template
 
@@ -229,92 +241,72 @@ Just a simple update to the instance security group to enable traffic on the def
 
 `.circleci/files/backend.yml`
 
-- Before
+**Before**
 
-  ```yml
-  InstanceSecurityGroup:
-    Type: AWS::EC2::SecurityGroup
-    Properties:
-        ...
-        GroupDescription: Allow port 22 and port 3030.
-        SecurityGroupIngress:
-            ...
-  ```
+```yml
+InstanceSecurityGroup:
+  Type: AWS::EC2::SecurityGroup
+  Properties:
+      ...
+      GroupDescription: Allow port 22 and port 3030.
+      SecurityGroupIngress:
+          ...
+```
 
-- After
+**After**
 
-  ```yml
-  InstanceSecurityGroup:
-    Type: AWS::EC2::SecurityGroup
-    Properties:
-        ...
-        GroupDescription: Allow port 9100, 22 and port 3030.
-        SecurityGroupIngress:
-            ...
-            - IpProtocol: tcp
-              FromPort: 9100
-              ToPort: 9100
-              CidrIp: 0.0.0.0/0
-  ```
+```yml
+InstanceSecurityGroup:
+  Type: AWS::EC2::SecurityGroup
+  Properties:
+      ...
+      GroupDescription: Allow port 9100, 22 and port 3030.
+      SecurityGroupIngress:
+          ...
+          - IpProtocol: tcp
+            FromPort: 9100
+            ToPort: 9100
+            CidrIp: 0.0.0.0/0
+```
 
 ### `configure-infrastructure` Job
 
 Executor environment, we'll use `cimg/python:3.10` as discussed in the previous part
 
-`.circleci/config.yml`
+The structure of this job requires the following steps
 
-```yml
-configure-infrastructure:
-  docker:
-    - image: cimg/python:3.10
-```
-
----
-
-Steps
-
-1. `checkout` command to check out the code
-
-   `.circleci/config.yml`
+1. Checkout the code from the repository
 
    ```yml
    - checkout
    ```
 
-2. Install required tools: The commands we created in [part 7](./7-configuration-management-setup.md#add-installation-commands)
-
-   `.circleci/config.yml`
+1. Install AWS CLI and Ansible, The commands we created in [part 7](./7-configuration-management-setup.md#add-installation-commands)
 
    ```yml
    - install_awscli
    - install_ansible
    ```
 
-3. Add SSH Fingerprint for Ansible SSH access, here we use the fingerprint created in [part 7](7-configuration-management-setup.md#add-ssh-key)
-
-   `.circleci/config.yml`
+1. Add SSH Fingerprint for Ansible SSH access, here we use the fingerprint created in [part 7](7-configuration-management-setup.md#add-ssh-key)
 
    ```yml
    - add_ssh_keys:
        fingerprints: ["d5:a4:0d:bd:36:a7:d2:03:2c:10:93:6a:7c:d1:a7:26"]
    ```
 
-4. Attach the workspace to retrieve the inventory file
-
-   `.circleci/config.yml`
+1. Attach the workspace to retrieve the inventory file
 
    ```yml
    - attach_workspace:
        at: ~/
    ```
 
-5. Run `ansible-playbook` to run configuration play
-
-   `.circleci/config.yml`
+1. Run `ansible-playbook` to run the configuration play
 
    ```yml
    - run:
-       name: Configure Server
+       name: Run Configure Server Ansible play
        command: |
          cd .circleci/ansible
          cat inventory.txt
@@ -322,13 +314,37 @@ Steps
          ansible-playbook -i inventory.txt configure-server.yml
    ```
 
-6. In case any failure occurs, add rollback command
-
-   `.circleci/config.yml`
+1. In case any failure occurs, add rollback command
 
    ```yml
    - destroy-environment
    ```
+
+Full job configuration:
+
+```yml
+jobs:
+  ...
+  configure-infrastructure:
+    docker:
+    - image: cimg/python:3.10
+    steps:
+    - checkout
+    - install_ansible
+    - install_awscli
+    - add_ssh_keys:
+       fingerprints: ["d5:a4:0d:bd:36:a7:d2:03:2c:10:93:6a:7c:d1:a7:26"]
+    - attach_workspace:
+        at: ~/
+    - run:
+       name: Run Configure Server Ansible play
+       command: |
+         cd .circleci/ansible
+         cat inventory.txt
+
+         ansible-playbook -i inventory.txt configure-server.yml
+    - destroy-environment
+```
 
 #### Workflow update
 
@@ -348,3 +364,13 @@ workflows:
 Commit and push these changes to trigger a new workflow on CircleCI
 
 ---
+
+## Footnotes
+
+To verify the stage has been executed successfully, SSH to the EC2 instance and check the versions of Node.js, NPM and PM2
+
+```sh
+node --version # Should output v13.8.0
+npm --version # Should output v6.x.x
+pm2 --version # Should run with no issue
+```
