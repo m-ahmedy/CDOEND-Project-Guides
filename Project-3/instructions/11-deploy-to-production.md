@@ -2,10 +2,16 @@
 
 ## Objectives
 
-- Deploy Backend production app to the configured EC2 instances
-- Deploy Frontend production static files to the S3 bucket
+**Complete CD Stages**
 
-## Affected files
+- Deploy Backend
+  - Deploy Backend production app to the configured EC2 instances
+- Deploy Frontend
+  - Deploy Frontend production static files to the S3 bucket
+
+**Submission requirements**
+
+**Affected files**
 
 - CircleCI configuration file `.circleci/config.yml`
 - Deploy backend Ansible playbook `.circleci/ansible/deploy-backend.yml`
