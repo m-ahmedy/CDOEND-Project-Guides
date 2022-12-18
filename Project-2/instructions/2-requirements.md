@@ -36,3 +36,9 @@
 ## Extra
 
 - One of the output exports of the CloudFormation script should be the **public URL** of the Load Balancer. Bonus points if you add http:// in front of the load balancer DNS Name in the output, for convenience
+
+## Prerequisites
+
+- An S3 Bucket hosted on the account
+
+- A simple index.html file uploaded to the bucket, you can find a [sample](../assets/index.html) in the assets` folder

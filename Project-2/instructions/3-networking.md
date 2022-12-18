@@ -441,3 +441,36 @@ Outputs:
     Export:
       Name: !Sub "${EnvironmentName}-Private-Subnet-2"
 ```
+
+## Passing external parameter values
+
+Create a JSON file that will be passed to the `--parameters` argument
+
+```json
+[
+  {
+    "ParameterKey": "EnvironmentName",
+    "ParameterValue": "HA-App"
+  },
+  {
+    "ParameterKey": "VpcCIDR",
+    "ParameterValue": "10.0.0.0/16"
+  },
+  {
+    "ParameterKey": "PublicSubnet1CIDR",
+    "ParameterValue": "10.0.0.0/24"
+  },
+  {
+    "ParameterKey": "PublicSubnet2CIDR",
+    "ParameterValue": "10.0.1.0/24"
+  },
+  {
+    "ParameterKey": "PrivateSubnet1CIDR",
+    "ParameterValue": "10.0.2.0/24"
+  },
+  {
+    "ParameterKey": "PrivateSubnet2CIDR",
+    "ParameterValue": "10.0.3.0/24"
+  }
+]
+```
