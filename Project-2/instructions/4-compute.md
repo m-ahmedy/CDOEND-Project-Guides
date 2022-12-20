@@ -320,6 +320,10 @@ Needed properties:
 
   The name or the Amazon Resource Name (ARN) of the instance profile associated with the IAM role for the instance
 
+- **Block Device Mappings**
+
+  Here we define the block devices to attach to the instance at launch, as a requirement we will make sure to have a 10 GB root volume (the path of the root volume on Ubuntu images is `/dev/sda1`), and make sure delete on termination option is set to true as well
+
 - **User Data** script:
 
   The **Base64-encoded** user data to make available to the launched EC2 instances
@@ -354,6 +358,11 @@ Resources:
       SecurityGroups:
         - !Ref WebServerSecurityGroup
       IamInstanceProfile: !Ref InstanceProfile
+      BlockDeviceMappings:
+        - DeviceName: /dev/sda1
+          Ebs:
+            VolumeSize: 10
+            DeleteOnTermination: true
       UserData:
         Fn::Base64: !Sub |
           #!/bin/bash
