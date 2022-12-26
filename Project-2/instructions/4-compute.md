@@ -82,42 +82,42 @@ Resources:
   JumpboxSecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:
-    VpcId:
-      Fn::ImportValue: !Sub "${EnvironmentName}-VPC"
-    GroupDescription: Allow SSH from anywhere
-    SecurityGroupIngress:
-      - IpProtocol: tcp
-        FromPort: 22
-        ToPort: 22
-        CidrIp: 0.0.0.0/0
+      VpcId:
+        Fn::ImportValue: !Sub "${EnvironmentName}-VPC"
+      GroupDescription: Allow SSH from anywhere
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 0.0.0.0/0
 
   ALBSecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:
-    VpcId:
-      Fn::ImportValue: !Sub "${EnvironmentName}-VPC"
-    GroupDescription: Allow HTTP from anywhere, and HTTP to the Web Servers
-    SecurityGroupIngress:
-      - IpProtocol: tcp
-        FromPort: 80
-        ToPort: 80
-        CidrIp: 0.0.0.0/0
+      VpcId:
+        Fn::ImportValue: !Sub "${EnvironmentName}-VPC"
+      GroupDescription: Allow HTTP from anywhere, and HTTP to the Web Servers
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0
 
   WebServerSecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:
-    VpcId:
-      Fn::ImportValue: !Sub "${EnvironmentName}-VPC"
-    GroupDescription: Allow SSH from JumpBox and HTTP from the ALB
-    SecurityGroupIngress:
-      - IpProtocol: tcp
-        FromPort: 80
-        ToPort: 80
-        SourceSecurityGroupId: !Ref ALBSecurityGroup
-      - IpProtocol: tcp
-        FromPort: 22
-        ToPort: 22
-        SourceSecurityGroupId: !Ref JumpboxSecurityGroup
+      VpcId:
+        Fn::ImportValue: !Sub "${EnvironmentName}-VPC"
+      GroupDescription: Allow SSH from JumpBox and HTTP from the ALB
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          SourceSecurityGroupId: !Ref ALBSecurityGroup
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          SourceSecurityGroupId: !Ref JumpboxSecurityGroup
 ```
 
 ## Controlling Access with IAM
