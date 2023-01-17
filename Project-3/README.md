@@ -1,7 +1,7 @@
-
 # Give Your Application Auto-Deploy Superpowers
 
 In this project, you will prove your mastery of the following learning objectives
+
 - Explain the fundamentals and benefits of CI/CD to achieve build and deploy automation for cloud-based software products.
 - Utilize Deployment Strategies to design and build CI/CD pipelines that support Continuous Delivery processes.
 - Utilize a configuration management tool to accomplish deployment to cloud-based servers.
@@ -24,6 +24,7 @@ In this project, you will prove your mastery of the following learning objective
 9. [Configure Infrastructure Stage](instructions/9-configure-infrastructure-stage.md)
 10. [Run Migrations Stage](instructions/10-run-migrations-stage.md)
 11. [Deploy to Production Stage](instructions/11-deploy-to-production.md)
+12. [Smoke Testing Stage](instructions/12-smoke-testing.md)
 
 ### Project Submission
 
@@ -36,13 +37,14 @@ For your submission, please submit the following:
   1. Public URLs to deployed application back-end in EC2 [URL04]
   1. Public URL to your Prometheus Server [URL05]
 - Your screenshots in JPG or PNG format, named using the screenshot number listed in the instructions. These screenshots should be included in your code repository in the root folder.
+
   1. Job failed because of compile errors. [SCREENSHOT01]
   1. Job failed because of unit tests. [SCREENSHOT02]
   1. Job that failed because of vulnerable packages. [SCREENSHOT03]
   1. An alert from one of your failed builds. [SCREENSHOT04]
   1. Appropriate job failure for infrastructure creation. [SCREENSHOT05]
   1. Appropriate job failure for the smoke test job. [SCREENSHOT06]
-  1. Successful rollback after a failed smoke test. [SCREENSHOT07]  
+  1. Successful rollback after a failed smoke test. [SCREENSHOT07]
   1. Successful promotion job. [SCREENSHOT08]
   1. Successful cleanup job. [SCREENSHOT09]
   1. Only deploy on pushed to `master` branch. [SCREENSHOT10]
