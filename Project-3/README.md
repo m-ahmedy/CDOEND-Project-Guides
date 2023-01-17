@@ -26,6 +26,8 @@ In this project, you will prove your mastery of the following learning objective
 11. [Deploy to Production Stage](instructions/11-deploy-to-production.md)
 12. [Smoke Testing Stage](instructions/12-smoke-testing.md)
 13. [Update CloudFront Distribution](instructions/13-update-cloudfront-distribution.md)
+14. [Cleanup old version](instructions/14-cleanup.md)
+15. [Non-master runs](instructions/15-non-master-runs.md)
 
 ### Project Submission
 
