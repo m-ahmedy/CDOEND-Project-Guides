@@ -28,6 +28,7 @@ In this project, you will prove your mastery of the following learning objective
 13. [Update CloudFront Distribution](instructions/13-update-cloudfront-distribution.md)
 14. [Cleanup old version](instructions/14-cleanup.md)
 15. [Non-master runs](instructions/15-non-master-runs.md)
+16. [Monitoring with Prometheus](instructions/16-monitoring-with-prometheus.md)
 
 ### Project Submission
 
