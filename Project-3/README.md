@@ -29,6 +29,7 @@ In this project, you will prove your mastery of the following learning objective
 14. [Cleanup old version](instructions/14-cleanup.md)
 15. [Non-master runs](instructions/15-non-master-runs.md)
 16. [Monitoring with Prometheus](instructions/16-monitoring-with-prometheus.md)
+17. [Monitoring and Alerting](instructions/17-monitoring-and-alerting.md)
 
 ### Project Submission
 

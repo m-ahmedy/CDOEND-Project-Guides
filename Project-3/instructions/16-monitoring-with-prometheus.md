@@ -86,6 +86,7 @@ The settings required for the Prometheus Server instance will be:
 - AMI: Ubuntu Server 22.04 LTS
 - Security Group allowing traffic on TCP ports 22, 9090, 9093, and 9100 (created previously)
 - On additional configuration attach the IAM role to the instance
+- Add a tag with key **Project**, and value **Udapeople**
 
 ### Check permissions
 
