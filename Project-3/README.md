@@ -30,6 +30,7 @@ In this project, you will prove your mastery of the following learning objective
 15. [Non-master runs](instructions/15-non-master-runs.md)
 16. [Monitoring with Prometheus](instructions/16-monitoring-with-prometheus.md)
 17. [Monitoring and Alerting](instructions/17-monitoring-and-alerting.md)
+18. [Finalizing Project Submission](instructions/18-finalizing-project-submission.md)
 
 ### Project Submission
 
@@ -72,3 +73,7 @@ Before you submit your project, please check your work against the project rubri
 ## License
 
 [License](LICENSE.md)
+
+If you liked the guides and helped you achieve what you want, consider to support this effort by buying me a coffee :D
+
+[!["Buy Me A Coffee"](https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png)](https://www.buymeacoffee.com/mahmoudahmedy)
