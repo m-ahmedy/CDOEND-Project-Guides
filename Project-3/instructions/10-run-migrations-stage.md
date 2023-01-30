@@ -147,7 +147,7 @@ Executor environment, we'll use `cimg/python:3.10` as discussed in the previous 
 `.circleci/config.yml`
 
 ```yml
-configure-infrastructure:
+run-migrations:
   docker:
     - image: cimg/python:3.10
 ```
